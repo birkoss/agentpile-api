@@ -22,7 +22,12 @@ class User {
 
         if ($this->id != null) {
             $where[] = "T.id = :id";
-            $fields[':id'] = $this->uid;
+            $fields[':id'] = $this->id;
+        }
+
+        if ($this->account_id != null) {
+            $where[] = "T.account_id = :account_id";
+            $fields[':account_id'] = $this->account_id;
         }
 
         if (count($where) > 0) {
