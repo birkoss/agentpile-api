@@ -28,6 +28,15 @@ if (!$user->get()) {
 	reject("2002", "Cannot match this user with this account");
 }
 
+if (isset($_GET['status'])) {
+	switch($_GET['status']) {
+		case 'deleted':
+			$user->date_deleted = $user->date_changed = date("Y-m-d H:i:s");
+			$user->update();
+			break;
+	}
+}
+
 $user_arr = array(
     "id" =>  $user->id,
     "account_id" => $user->account_id,
