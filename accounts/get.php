@@ -15,7 +15,7 @@ $db = $database->getConnection();
 $account = new Account($db);
  
 $account->token = isset($_GET['token']) ? $_GET['token'] : reject("1000", "No Token provided");
-$account->platform = isset($_GET['platform']) ? $_GET['platform'] : reject("1000", "No Platform provided");
+$account->platform = isset($_GET['platform']) ? $_GET['platform'] : reject("1001", "No Platform provided");
 
 /* Create a new account if necessary */
 if (!$account->get()) {
