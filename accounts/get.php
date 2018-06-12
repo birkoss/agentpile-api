@@ -7,7 +7,7 @@ header('Content-Type: application/json');
  
 include_once '../config/core.php';
 include_once '../config/database.php';
-include_once '../objects/user.php';
+include_once '../objects/account.php';
  
 $database = new Database();
 $db = $database->getConnection();
@@ -22,7 +22,9 @@ if (!$account->get()) {
 	$account->date_added = $account->date_changed = date("Y-m-d H:i:s");
 	$account->create();
 
-	$account->get();
+	if (!$account->get()) {
+		reject("1002", "Cannot fetch the account");
+	}
 }
 
 $account_arr = array(

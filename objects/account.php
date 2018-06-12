@@ -21,15 +21,17 @@ class Account {
         $where = array();
 
         if ($this->token != null && $this->platform != null) {
-            $where[] = "T.token = :token";
-            $fields[':token'] = $this->token;           
+            // $where[] = "T.token=:token";
+            // $fields[':token'] = "debug";              
+            $where[] = "T.token=:token";
+            $fields[':token'] = $this->token;
 
-            $where[] = "T.platform = :platform";
+            $where[] = "T.platform=:platform";
             $fields[':platform'] = $this->platform;
         }
 
         if ($this->id != null) {
-            $where[] = "u.id = :id";
+            $where[] = "T.id = :id";
             $fields[':id'] = $this->id;
         }
 
@@ -38,16 +40,13 @@ class Account {
         }
 
         $query .= " LIMIT 0,1";
-     
+
         $stmt = $this->conn->prepare($query);
      
-        foreach ($fields as $id => $value) {
-            $stmt->bindParam($id, $value);
-        }
-     
-        $stmt->execute();
+        $stmt->execute($fields);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
         if (!$row) {
             return false;
         }
