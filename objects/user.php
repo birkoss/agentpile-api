@@ -20,14 +20,14 @@ class User {
         $where = array();
         $fields = array();
 
-        if ($this->id != null) {
+        if ($this->id != null && $this->account_id != null) {
             $where[] = "T.id = :id";
             $fields[':id'] = $this->id;
-        }
 
-        if ($this->account_id != null) {
             $where[] = "T.account_id = :account_id";
             $fields[':account_id'] = $this->account_id;
+        } else {
+            return false;
         }
 
         if (count($where) > 0) {
@@ -35,14 +35,10 @@ class User {
         }
 
         $query .= " LIMIT 0,1";
-     
+
         $stmt = $this->conn->prepare($query);
      
-        foreach ($fields as $id => $value) {
-            $stmt->bindParam($id, $value);
-        }
-     
-        $stmt->execute();
+        $stmt->execute($fields);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$row) {
@@ -68,6 +64,8 @@ class User {
         $stmt->bindParam(":date_changed", htmlspecialchars(strip_tags($this->date_changed)));
      
         if ($stmt->execute()) {
+
+            $this->id = $this->conn->lastInsertId();
             return true;
         }
      

@@ -16,9 +16,9 @@ $user = new User($db);
  
 $user->id = isset($_GET['id']) ? $_GET['id'] : reject("2000", "No ID provided");
 $user->account_id = isset($_GET['account_id']) ? $_GET['account_id'] : reject("2001", "No Account ID provided");
- 
+
 /* Must create a new user */
-if (preg_match('/^offline_/', $user->id)) {
+if (preg_match('/^tmp_/', $user->id)) {
 	$user->id = null;
 	$user->date_added = $user->date_changed = date("Y-m-d H:i:s");
 	$user->create();
@@ -41,8 +41,8 @@ $user_arr = array(
     "id" =>  $user->id,
     "account_id" => $user->account_id,
     "date_added" => $user->date_added,
-    "date_changed" => $user->date_changed
+    "date_changed" => $user->date_changed,
     "date_deleted" => $user->date_deleted
 );
- 
+
 resolve($user_arr);
