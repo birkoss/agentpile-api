@@ -64,7 +64,6 @@ class User {
         $stmt->bindParam(":date_changed", htmlspecialchars(strip_tags($this->date_changed)));
      
         if ($stmt->execute()) {
-
             $this->id = $this->conn->lastInsertId();
             return true;
         }

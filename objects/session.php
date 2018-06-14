@@ -6,6 +6,8 @@ class Session {
  
     public $id;
     public $user_id;
+    public $archive_id;
+
     public $date_read;
     public $date_added;
     public $date_changed;
@@ -46,11 +48,7 @@ class Session {
      
         $stmt = $this->conn->prepare($query);
      
-        foreach ($fields as $id => $value) {
-            $stmt->bindParam($id, $value);
-        }
-     
-        $stmt->execute();
+        $stmt->execute($fields);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$row) {
@@ -59,6 +57,8 @@ class Session {
      
         $this->id = $row['id'];
         $this->user_id = $row['user_id'];
+        $this->archive_id = $row['archive_id'];
+
         $this->date_read = $row['date_read'];
         $this->date_added = $row['date_added'];
         $this->date_changed = $row['date_changed'];
@@ -74,16 +74,60 @@ class Session {
     }
 
     function create() {
-        $query = "INSERT INTO " . $this->table_name . " SET date_read=:date_red, user_id=:user_id, date_added=:date_added, date_changed=:date_changed";
+        $fields = array(
+            "date_read=:date_read",
+            "user_id=:user_id",
+            "date_added=:date_added",
+            "date_changed=:date_changed"
+        );
+
+        $values = array(
+            ":date_read" => $this->date_read,
+            ":user_id" => $this->user_id,
+            ":date_added" => $this->date_added,
+            ":date_changed" => $this->date_changed
+        );
+
+        $query = "INSERT INTO " . $this->table_name . " SET ".implode(", ", $fields);
+
+        $stmt = $this->conn->prepare($query);
+
+        if ($stmt->execute($values)) {
+            $this->id = $this->conn->lastInsertId();
+            return true;
+        }
+     
+        return false;
+    }
+
+    function update() {
+        $fields = array(
+            "isCompleted=:isCompleted",
+            "pageBookmark=:pageBookmark",
+            "bookName=:bookName",
+            "bookAuthor=:bookAuthor",
+            "date_changed = :date_changed",
+            "date_deleted = :date_deleted"
+        );
+
+        $values = array(
+            ":isCompleted" => $this->isCompleted,
+            ":pageBookmark" => $this->pageBookmark,
+            ":bookName" => $this->bookName,
+            ":bookAuthor" => $this->bookAuthor,
+            ":date_deleted" => $this->date_deleted,
+            ":date_changed" => date('Y-m-d H:i:s'),
+          
+            ":user_id" => $this->user_id,
+            ":id" => $this->id
+        );
+
+        $query = "UPDATE " . $this->table_name . " SET " . implode(", ", $fields) . " WHERE user_id=:user_id AND id=:id";
 
         $stmt = $this->conn->prepare($query);
      
-        $stmt->bindParam(":date_read", htmlspecialchars(strip_tags($this->date_read)));
-        $stmt->bindParam(":account_id", htmlspecialchars(strip_tags($this->account_id)));
-        $stmt->bindParam(":date_added", htmlspecialchars(strip_tags($this->date_added)));
-        $stmt->bindParam(":date_changed", htmlspecialchars(strip_tags($this->date_changed)));
-     
-        if ($stmt->execute()) {
+        if ($stmt->execute($values)) {
+            $this->date_changed = $values[':date_changed'];
             return true;
         }
      
