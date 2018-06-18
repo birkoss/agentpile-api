@@ -41,8 +41,8 @@ if (!$session->get()) {
 	reject("3004", "Cannot match this session with this account and this user");
 }
 
-$session->bookName = isset($_GET['book_name']) ? urldecode($_GET['book_name']) : reject("3005", "No Book Name provided");
-$session->bookAuthor = isset($_GET['book_author']) ? urldecode($_GET['book_author']) : reject("3006", "No Book Author provided");
+$session->book_id = isset($_GET['book_id']) ? urldecode($_GET['book_id']) : reject("3005", "No Book Id provided");
+$session->archive_id = isset($_GET['archive_id']) ? urldecode($_GET['archive_id']) : reject("3006", "No Archive Id provided");
 $session->isCompleted = isset($_GET['is_completed']) ? ((int)$_GET['is_completed'] == 1 ? true : false) : reject("3008", "No Is Completed provided");
 $session->pageBookmark = isset($_GET['page_bookmark']) ? (int)$_GET['page_bookmark'] : reject("3009", "No Page Bookmark provided");
 
@@ -65,8 +65,7 @@ $session_arr = array(
     "date_added" => $session->date_added,
     "date_changed" => $session->date_changed,
     "date_deleted" => $session->date_deleted,
-    "book_author" => $session->bookAuthor,
-    "book_name" => $session->bookName,
+    "book_id" => $session->book_id,
     "is_completed" => ($session->isCompleted ? 1 : 0),
     "page_bookmark" => $session->pageBookmark
 );
